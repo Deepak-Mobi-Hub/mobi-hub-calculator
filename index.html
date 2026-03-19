@@ -58,6 +58,38 @@
             margin: 0 auto 20px;
         }
 
+        .selection-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            margin: 0 auto 24px;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            background-color: var(--bg-color);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            background-color: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
         input[type="number"] {
             flex: 1;
             padding: 14px 16px;
@@ -227,6 +259,12 @@
         }
 
         /* Responsive Design */
+        @media (max-width: 900px) {
+            .selection-group {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .input-group {
                 flex-direction: column;
@@ -242,12 +280,99 @@
                 font-size: 16px;
             }
         }
+
+        @media (max-width: 480px) {
+            .selection-group {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1><span class="text-blue">Mobi Hub</span> Calculator</h1>
+        
+        <div class="selection-group">
+            <select id="deviceModel">
+                <option value="">Select Model</option>
+                <!-- iPhone 17 Series -->
+                <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+                <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                <option value="iPhone 17 Plus">iPhone 17 Plus</option>
+                <option value="iPhone 17">iPhone 17</option>
+                <!-- iPhone 16 Series -->
+                <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                <option value="iPhone 16 Plus">iPhone 16 Plus</option>
+                <option value="iPhone 16">iPhone 16</option>
+                <!-- iPhone 15 Series -->
+                <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                <option value="iPhone 15 Plus">iPhone 15 Plus</option>
+                <option value="iPhone 15">iPhone 15</option>
+                <!-- iPhone 14 Series -->
+                <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                <option value="iPhone 14 Plus">iPhone 14 Plus</option>
+                <option value="iPhone 14">iPhone 14</option>
+                <!-- iPhone 13 Series -->
+                <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                <option value="iPhone 13">iPhone 13</option>
+                <option value="iPhone 13 mini">iPhone 13 mini</option>
+                <!-- iPhone 12 Series -->
+                <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
+                <option value="iPhone 12 Pro">iPhone 12 Pro</option>
+                <option value="iPhone 12">iPhone 12</option>
+                <option value="iPhone 12 mini">iPhone 12 mini</option>
+                <!-- iPhone 11 Series -->
+                <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
+                <option value="iPhone 11 Pro">iPhone 11 Pro</option>
+                <option value="iPhone 11">iPhone 11</option>
+                <!-- Older Models -->
+                <option value="iPhone XS Max">iPhone XS Max</option>
+                <option value="iPhone XS">iPhone XS</option>
+                <option value="iPhone XR">iPhone XR</option>
+                <option value="iPhone X">iPhone X</option>
+                <option value="iPhone SE (3rd Gen)">iPhone SE (3rd Gen)</option>
+                <option value="iPhone SE (2nd Gen)">iPhone SE (2nd Gen)</option>
+                <option value="iPhone 8 Plus">iPhone 8 Plus</option>
+                <option value="iPhone 8">iPhone 8</option>
+            </select>
+
+            <select id="deviceStorage">
+                <option value="">Select Storage</option>
+                <option value="64GB">64GB</option>
+                <option value="128GB">128GB</option>
+                <option value="256GB">256GB</option>
+                <option value="512GB">512GB</option>
+                <option value="1TB">1TB</option>
+            </select>
+
+            <select id="deviceGrade">
+                <option value="">Select Grade</option>
+                <option value="CPO">CPO</option>
+                <option value="ASIS+">ASIS+</option>
+                <option value="ASIS">ASIS</option>
+                <option value="A/A+">A/A+</option>
+                <option value="A++">A++</option>
+                <option value="A">A</option>
+                <option value="AB">AB</option>
+                <option value="ABC">ABC</option>
+                <option value="BC">BC</option>
+            </select>
+
+            <select id="deviceSpec">
+                <option value="">Select Spec</option>
+                <option value="EUR">EUR</option>
+                <option value="CANADA">CANADA</option>
+                <option value="JAPAN">JAPAN</option>
+                <option value="INDIAN">INDIAN</option>
+                <option value="ASIAN">ASIAN</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
         
         <div class="input-group">
             <input type="number" id="basePrice" placeholder="Enter Base Price (X)" step="0.01" autocomplete="off">
@@ -398,6 +523,24 @@
         function copyResults() {
             const isShowingDetails = document.getElementById('resultsSection').classList.contains('show-details');
 
+            // --- Device Details Extraction ---
+            const model = document.getElementById('deviceModel').value;
+            const storage = document.getElementById('deviceStorage').value;
+            const grade = document.getElementById('deviceGrade').value;
+            const spec = document.getElementById('deviceSpec').value;
+
+            let deviceDetails = [];
+            if(model) deviceDetails.push(model);
+            if(storage) deviceDetails.push(storage);
+            if(grade) deviceDetails.push(`Grade: ${grade}`);
+            if(spec) deviceDetails.push(`Spec: ${spec}`);
+            
+            let headerText = "";
+            if (deviceDetails.length > 0) {
+                // Using WhatsApp bold formatting around the device details
+                headerText = `*${deviceDetails.join(' | ')}*\n\n`;
+            }
+
             // Retrieve calculated values for Row 1
             const X1 = document.getElementById('valX1').textContent;
             const Y1 = document.getElementById('valY1').textContent;
@@ -424,7 +567,7 @@
             row1Copy += ` | ${A} | ${P1}`;
             row2Copy += ` | ${B} | ${P2}`;
 
-            const copyString = `${row1Copy}\n${row2Copy}`;
+            const copyString = `${headerText}${row1Copy}\n${row2Copy}`;
 
             // Create temporary textarea to facilitate copying
             const textarea = document.createElement('textarea');
