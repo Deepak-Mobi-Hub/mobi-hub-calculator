@@ -318,20 +318,32 @@
     </div>
 
     <script>
-        // Listen for "Enter" key press on the input field
-        document.getElementById('basePrice').addEventListener('keypress', function (e) {
+        const basePriceInput = document.getElementById('basePrice');
+
+        // Listen for "Enter" key press on the input field (legacy support)
+        basePriceInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 performCalculations();
             }
         });
 
+        // Listen for real-time changes as the user types
+        basePriceInput.addEventListener('input', performCalculations);
+
         function performCalculations() {
-            const inputVal = document.getElementById('basePrice').value;
+            const inputVal = basePriceInput.value;
             const errorMsg = document.getElementById('errorMsg');
             const resultsSection = document.getElementById('resultsSection');
 
-            // Validation
-            if (!inputVal || isNaN(inputVal) || Number(inputVal) <= 0) {
+            // Handle empty input gracefully by just hiding the results
+            if (inputVal === '') {
+                errorMsg.textContent = "";
+                resultsSection.classList.remove('active');
+                return;
+            }
+
+            // Validation for invalid numbers
+            if (isNaN(inputVal) || Number(inputVal) <= 0) {
                 errorMsg.textContent = "Please enter a valid positive number.";
                 resultsSection.classList.remove('active');
                 return;
@@ -430,6 +442,7 @@
             const originalText = copyBtnText.textContent;
 
             try {
+                // The standard execCommand is used here as requested to ensure iframe compatibility 
                 document.execCommand('copy');
                 // Provide visual feedback
                 copyBtnText.textContent = "Copied Both Rows!";
