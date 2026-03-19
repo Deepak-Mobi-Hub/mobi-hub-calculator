@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobi Hub Calculator</title>
+    
+    <!-- Add html2canvas library for image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
         :root {
             --primary: #4F46E5;
@@ -164,7 +168,6 @@
             border-radius: 8px;
             margin-bottom: 8px;
             background: var(--bg-color);
-            /* Hide scrollbar for cleaner look but keep functionality */
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -286,6 +289,136 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* --- Export Card Styles (Hidden until captured) --- */
+        .export-card-wrapper {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+        }
+
+        .export-card {
+            width: 500px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #111827;
+        }
+
+        .export-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 80px;
+            font-weight: 800;
+            color: rgba(79, 70, 229, 0.04);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .export-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .export-header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 16px;
+        }
+
+        .export-header h2 {
+            color: #2563EB;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .export-device {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4B5563;
+        }
+
+        .export-row-box {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .export-row-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #111827;
+            font-size: 16px;
+        }
+
+        .export-prices {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .export-price-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .export-price-label {
+            font-size: 12px;
+            color: #6B7280;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .export-price-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .export-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: #9CA3AF;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-color);
+        }
     </style>
 </head>
 <body>
@@ -382,7 +515,6 @@
         <div id="errorMsg" class="error-message"></div>
 
         <div id="resultsSection" class="results-section">
-            
             <button class="toggle-details-btn" id="toggleBtn" onclick="toggleDetails()">Show Details (Y & Z)</button>
 
             <div class="row-title">5% Client Profit</div>
@@ -433,12 +565,74 @@
                 </div>
             </div>
 
-            <button class="copy-btn" id="copyBtn" onclick="copyResults()">
+            <button class="copy-btn" id="copyBtn" onclick="copyResults()" style="width: 100%; justify-content: center;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                 </svg>
-                <span id="copyText">Copy Both Rows</span>
+                <span id="copyText">Copy Text Format</span>
             </button>
+
+            <!-- Image Generation Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="downloadImage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Image
+                </button>
+                <button class="action-btn" onclick="shareImage(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span id="shareText">Share (WhatsApp)</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Hidden Export Card: This is structured perfectly for the image output -->
+    <div class="export-card-wrapper">
+        <div id="exportCard" class="export-card">
+            <div class="export-watermark">MOBI HUB</div>
+            <div class="export-content">
+                <div class="export-header">
+                    <h2>Mobi Hub Pricing</h2>
+                    <div id="exportDeviceText" class="export-device">Custom Price Calculation</div>
+                </div>
+
+                <div class="export-row-box">
+                    <div class="export-row-title">Client Profit @ 5%</div>
+                    <div class="export-prices">
+                        <div class="export-price-item">
+                            <div class="export-price-label">Client Price</div>
+                            <div class="export-price-value text-blue" id="expA">0.00</div>
+                        </div>
+                        <div class="export-price-item">
+                            <div class="export-price-label">Our Cost</div>
+                            <div class="export-price-value text-green" id="expP1">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-row-box">
+                    <div class="export-row-title">Client Profit @ 7%</div>
+                    <div class="export-prices">
+                        <div class="export-price-item">
+                            <div class="export-price-label">Client Price</div>
+                            <div class="export-price-value text-blue" id="expB">0.00</div>
+                        </div>
+                        <div class="export-price-item">
+                            <div class="export-price-label">Our Cost</div>
+                            <div class="export-price-value text-green" id="expP2">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-footer">
+                    Generated securely by Mobi Hub • <span id="exportDate"></span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -446,16 +640,19 @@
         const basePriceInput = document.getElementById('basePrice');
 
         // Listen for "Enter" key press on the input field (legacy support)
-        basePriceInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                performCalculations();
-            }
-        });
+        if (basePriceInput) {
+            basePriceInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    performCalculations();
+                }
+            });
 
-        // Listen for real-time changes as the user types
-        basePriceInput.addEventListener('input', performCalculations);
+            // Listen for real-time changes as the user types
+            basePriceInput.addEventListener('input', performCalculations);
+        }
 
         function performCalculations() {
+            if (!basePriceInput) return;
             const inputVal = basePriceInput.value;
             const errorMsg = document.getElementById('errorMsg');
             const resultsSection = document.getElementById('resultsSection');
@@ -556,16 +753,13 @@
             const P2 = document.getElementById('valP2').textContent;
 
             // Format strings based on visibility
-            let row1Copy = `5% Client Profit: ${X1}`;
-            let row2Copy = `7% Client Profit: ${X2}`;
+            let row1Copy = `Client Profit at 5%: Client Price ${A} | Our Cost ${P1}`;
+            let row2Copy = `Client Profit at 7%: Client Price ${B} | Our Cost ${P2}`;
 
             if (isShowingDetails) {
-                row1Copy += ` | ${Y1} | ${Z1}`;
-                row2Copy += ` | ${Y2} | ${Z2}`;
+                row1Copy += `\n   └ (Base: ${X1} | -11%: ${Y1} | Logistics: ${Z1})`;
+                row2Copy += `\n   └ (Base: ${X2} | -11%: ${Y2} | Logistics: ${Z2})`;
             }
-
-            row1Copy += ` | ${A} | ${P1}`;
-            row2Copy += ` | ${B} | ${P2}`;
 
             const copyString = `${headerText}${row1Copy}\n${row2Copy}`;
 
@@ -600,6 +794,99 @@
                 }, 2000);
             } finally {
                 document.body.removeChild(textarea);
+            }
+        }
+
+        // --- Image Generation & Sharing Logic ---
+        
+        function populateExportCard() {
+            // Get Device Details
+            const model = document.getElementById('deviceModel').value;
+            const storage = document.getElementById('deviceStorage').value;
+            const grade = document.getElementById('deviceGrade').value;
+            const spec = document.getElementById('deviceSpec').value;
+
+            let deviceDetails = [];
+            if(model) deviceDetails.push(model);
+            if(storage) deviceDetails.push(storage);
+            if(grade) deviceDetails.push(`Grade: ${grade}`);
+            if(spec) deviceDetails.push(`Spec: ${spec}`);
+
+            // Update header text in the receipt
+            document.getElementById('exportDeviceText').textContent = deviceDetails.length > 0 ? deviceDetails.join(' | ') : "Custom Price Calculation";
+
+            // Map UI Prices to Receipt Prices
+            document.getElementById('expA').textContent = document.getElementById('valA').textContent;
+            document.getElementById('expP1').textContent = document.getElementById('valP1').textContent;
+            document.getElementById('expB').textContent = document.getElementById('valB').textContent;
+            document.getElementById('expP2').textContent = document.getElementById('valP2').textContent;
+
+            // Add Timestamp
+            document.getElementById('exportDate').textContent = new Date().toLocaleString();
+        }
+
+        async function generateImageBlob() {
+            populateExportCard();
+            const exportCard = document.getElementById('exportCard');
+            
+            // html2canvas renders the DOM element into a canvas
+            const canvas = await html2canvas(exportCard, {
+                scale: 2, // 2x scale for high resolution (Retina display quality)
+                backgroundColor: '#ffffff',
+                logging: false
+            });
+            
+            // Convert Canvas to a Blob
+            return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        }
+
+        async function downloadImage() {
+            const blob = await generateImageBlob();
+            if (!blob) return;
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const modelName = document.getElementById('deviceModel').value || 'calculation';
+            
+            a.download = `MobiHub_${modelName.replace(/\s+/g, '_')}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function shareImage(event) {
+            const btnText = document.getElementById('shareText');
+            const originalText = btnText.textContent;
+            
+            try {
+                btnText.textContent = "Generating...";
+                const blob = await generateImageBlob();
+                if (!blob) return;
+
+                const modelName = document.getElementById('deviceModel').value || 'calculation';
+                const file = new File([blob], `MobiHub_${modelName.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+                // Check if device supports Web Share API with files (mostly Mobile iOS/Android/Mac Safari)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Mobi Hub Pricing',
+                        text: 'Mobi Hub Pricing Details'
+                    });
+                    btnText.textContent = "Shared!";
+                } else {
+                    // Fallback for desktop browsers that don't support sharing files natively
+                    btnText.textContent = "Not supported. Please 'Download' instead.";
+                }
+            } catch (error) {
+                console.error("Error sharing:", error);
+                btnText.textContent = "Share cancelled";
+            } finally {
+                setTimeout(() => {
+                    btnText.textContent = originalText;
+                }, 3000);
             }
         }
     </script>
