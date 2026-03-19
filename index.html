@@ -110,13 +110,27 @@
             display: flex;
         }
 
+        .row-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            align-self: flex-start;
+            margin-bottom: 8px;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .row-title:first-child {
+            margin-top: 0;
+        }
+
         .results-row {
             display: flex;
             width: 100%;
             overflow-x: auto;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            margin-bottom: 24px;
+            margin-bottom: 8px;
             background: var(--bg-color);
             /* Hide scrollbar for cleaner look but keep functionality */
             -ms-overflow-style: none;
@@ -129,7 +143,7 @@
 
         .result-cell {
             flex: 1;
-            min-width: 100px;
+            min-width: 120px;
             padding: 16px;
             text-align: center;
             border-right: 1px solid var(--border-color);
@@ -140,7 +154,7 @@
         }
 
         .cell-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             margin-bottom: 8px;
             font-weight: 500;
@@ -161,6 +175,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-top: 16px;
         }
 
         .copy-btn:hover {
@@ -172,13 +187,47 @@
             height: 18px;
         }
 
+        .text-green {
+            color: #059669 !important;
+        }
+
+        .text-blue {
+            color: #2563EB !important;
+        }
+
+        .detail-cell {
+            display: none;
+        }
+
+        .show-details .detail-cell {
+            display: block;
+        }
+
+        .toggle-details-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+            margin-bottom: 16px;
+            align-self: flex-start;
+        }
+
+        .toggle-details-btn:hover {
+            background-color: transparent;
+            color: var(--primary-hover);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .input-group {
                 flex-direction: column;
             }
@@ -186,7 +235,7 @@
                 padding: 24px 16px;
             }
             .result-cell {
-                min-width: 80px;
+                min-width: 100px;
                 padding: 12px 8px;
             }
             .cell-value {
@@ -208,34 +257,54 @@
         <div id="errorMsg" class="error-message"></div>
 
         <div id="resultsSection" class="results-section">
-            <div class="results-row" id="resultsRow">
+            
+            <button class="toggle-details-btn" id="toggleBtn" onclick="toggleDetails()">Show Details (Y & Z)</button>
+
+            <div class="row-title">5% Client Profit</div>
+            <div class="results-row">
                 <div class="result-cell">
-                    <div class="cell-label">X</div>
-                    <div class="cell-value" id="valX">0.00</div>
+                    <div class="cell-label">X (Base)</div>
+                    <div class="cell-value" id="valX1">0.00</div>
                 </div>
-                <div class="result-cell">
+                <div class="result-cell detail-cell">
                     <div class="cell-label">Y (-11%)</div>
-                    <div class="cell-value" id="valY">0.00</div>
+                    <div class="cell-value" id="valY1">0.00</div>
+                </div>
+                <div class="result-cell detail-cell">
+                    <div class="cell-label">Logistic Cost (Z)</div>
+                    <div class="cell-value" id="valZ1">0.00</div>
                 </div>
                 <div class="result-cell">
-                    <div class="cell-label">Z (-25)</div>
-                    <div class="cell-value" id="valZ">0.00</div>
+                    <div class="cell-label text-blue">Client Price (A -5%)</div>
+                    <div class="cell-value text-blue" id="valA">0.00</div>
                 </div>
                 <div class="result-cell">
-                    <div class="cell-label">A (-5%)</div>
-                    <div class="cell-value" id="valA">0.00</div>
+                    <div class="cell-label text-green">Our Cost (P1 -3%)</div>
+                    <div class="cell-value text-green" id="valP1">0.00</div>
+                </div>
+            </div>
+
+            <div class="row-title">7% Client Profit</div>
+            <div class="results-row">
+                <div class="result-cell">
+                    <div class="cell-label">X (Base)</div>
+                    <div class="cell-value" id="valX2">0.00</div>
+                </div>
+                <div class="result-cell detail-cell">
+                    <div class="cell-label">Y (-11%)</div>
+                    <div class="cell-value" id="valY2">0.00</div>
+                </div>
+                <div class="result-cell detail-cell">
+                    <div class="cell-label">Logistic Cost (Z)</div>
+                    <div class="cell-value" id="valZ2">0.00</div>
                 </div>
                 <div class="result-cell">
-                    <div class="cell-label">B (-7%)</div>
-                    <div class="cell-value" id="valB">0.00</div>
+                    <div class="cell-label text-blue">Client Price 2 (B -7%)</div>
+                    <div class="cell-value text-blue" id="valB">0.00</div>
                 </div>
                 <div class="result-cell">
-                    <div class="cell-label">P1 (-3%)</div>
-                    <div class="cell-value" id="valP1">0.00</div>
-                </div>
-                <div class="result-cell">
-                    <div class="cell-label">P2 (-3%)</div>
-                    <div class="cell-value" id="valP2">0.00</div>
+                    <div class="cell-label text-green">Our Cost (P2 -3%)</div>
+                    <div class="cell-value text-green" id="valP2">0.00</div>
                 </div>
             </div>
 
@@ -243,7 +312,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                 </svg>
-                <span id="copyText">Copy Results</span>
+                <span id="copyText">Copy Both Rows</span>
             </button>
         </div>
     </div>
@@ -273,39 +342,79 @@
             // The Math
             const X = parseFloat(inputVal);
             const Y = X - (X * 0.11);
-            const Z = Y - 25;
+            const Z = Y - 25;  // Logistic Cost
+            
+            // Row 1 Calculations (5% Client, 3% SP1)
             const A = Z - (Z * 0.05);
-            const B = Z - (Z * 0.07);
             const P1 = A - (A * 0.03);
+
+            // Row 2 Calculations (7% Client, 3% SP2)
+            const B = Z - (Z * 0.07);
             const P2 = B - (B * 0.03);
 
-            // Update DOM with 2 decimal formatting
-            document.getElementById('valX').textContent = X.toFixed(2);
-            document.getElementById('valY').textContent = Y.toFixed(2);
-            document.getElementById('valZ').textContent = Z.toFixed(2);
+            // Update DOM with 2 decimal formatting for Row 1
+            document.getElementById('valX1').textContent = X.toFixed(2);
+            document.getElementById('valY1').textContent = Y.toFixed(2);
+            document.getElementById('valZ1').textContent = Z.toFixed(2);
             document.getElementById('valA').textContent = A.toFixed(2);
-            document.getElementById('valB').textContent = B.toFixed(2);
             document.getElementById('valP1').textContent = P1.toFixed(2);
+
+            // Update DOM with 2 decimal formatting for Row 2
+            document.getElementById('valX2').textContent = X.toFixed(2);
+            document.getElementById('valY2').textContent = Y.toFixed(2);
+            document.getElementById('valZ2').textContent = Z.toFixed(2);
+            document.getElementById('valB').textContent = B.toFixed(2);
             document.getElementById('valP2').textContent = P2.toFixed(2);
 
             // Show Results
             resultsSection.classList.add('active');
         }
 
+        function toggleDetails() {
+            const section = document.getElementById('resultsSection');
+            const btn = document.getElementById('toggleBtn');
+            
+            section.classList.toggle('show-details');
+            
+            if (section.classList.contains('show-details')) {
+                btn.textContent = 'Hide Details (Y & Z)';
+            } else {
+                btn.textContent = 'Show Details (Y & Z)';
+            }
+        }
+
         function copyResults() {
-            // Retrieve calculated values
-            const X = document.getElementById('valX').textContent;
-            const Y = document.getElementById('valY').textContent;
-            const Z = document.getElementById('valZ').textContent;
+            const isShowingDetails = document.getElementById('resultsSection').classList.contains('show-details');
+
+            // Retrieve calculated values for Row 1
+            const X1 = document.getElementById('valX1').textContent;
+            const Y1 = document.getElementById('valY1').textContent;
+            const Z1 = document.getElementById('valZ1').textContent;
             const A = document.getElementById('valA').textContent;
-            const B = document.getElementById('valB').textContent;
             const P1 = document.getElementById('valP1').textContent;
+
+            // Retrieve calculated values for Row 2
+            const X2 = document.getElementById('valX2').textContent;
+            const Y2 = document.getElementById('valY2').textContent;
+            const Z2 = document.getElementById('valZ2').textContent;
+            const B = document.getElementById('valB').textContent;
             const P2 = document.getElementById('valP2').textContent;
 
-            // Format as a single row with separators
-            const copyString = `${X} | ${Y} | ${Z} | ${A} | ${B} | ${P1} | ${P2}`;
+            // Format strings based on visibility
+            let row1Copy = `5% Client Profit: ${X1}`;
+            let row2Copy = `7% Client Profit: ${X2}`;
 
-            // Create temporary textarea to facilitate copying in environments like iFrames
+            if (isShowingDetails) {
+                row1Copy += ` | ${Y1} | ${Z1}`;
+                row2Copy += ` | ${Y2} | ${Z2}`;
+            }
+
+            row1Copy += ` | ${A} | ${P1}`;
+            row2Copy += ` | ${B} | ${P2}`;
+
+            const copyString = `${row1Copy}\n${row2Copy}`;
+
+            // Create temporary textarea to facilitate copying
             const textarea = document.createElement('textarea');
             textarea.value = copyString;
             
@@ -323,7 +432,7 @@
             try {
                 document.execCommand('copy');
                 // Provide visual feedback
-                copyBtnText.textContent = "Copied!";
+                copyBtnText.textContent = "Copied Both Rows!";
                 setTimeout(() => {
                     copyBtnText.textContent = originalText;
                 }, 2000);
